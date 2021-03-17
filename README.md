@@ -103,11 +103,7 @@ Parameters:
 ### `finish()`
 
 **Must be called at the end of your task** to indicate to the OS that it's
-finished.  (Only required on iOS, no-op on Android).
-
-### `cancel()`
-
-Cancels any currently scheduled task.
+finished. Calling this manually will force cancel all tasks.
 
 ### `statusAsync()`
 

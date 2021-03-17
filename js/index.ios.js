@@ -8,14 +8,29 @@ const BackgroundTask: BackgroundTaskInterface = {
   ...constants,
 
   _definition: null,
+  _lastStartTime: null,
+  _taskIds: [],
 
   define: function(task) {
-    this._definition = task
+    this._definition = (taskId) => {
+      console.log(`Task "${taskId}" executing... Time since last execution: ${new Date().getTime() - this._lastStartTime.getTime()}ms`)
+      this._lastStartTime = new Date()
+      this._taskIds.push(taskId)
+      await task()
+      const index = this._taskIds.findIndex((tId) => tId === taskId)
+      if (index >= 0) {
+        console.log(`Task "${taskId}" executed successfully. Execution duration: ${new Date().getTime() - this._lastStartTime.getTime()}ms`)
+        BackgroundFetch.finish(taskId)
+        this._taskIds.splice(index, 1)
+      }
+    }
   },
 
   schedule: function() {
     // Cancel existing tasks
     BackgroundFetch.stop()
+
+    this._lastStartTime = new Date()
 
     // Configure the native module
     // Automatically calls RNBackgroundFetch#start
@@ -23,14 +38,21 @@ const BackgroundTask: BackgroundTaskInterface = {
       {},
       this._definition,
       (taskId) => {
-        console.warn(`Task ${taskId} exceeded the maximum allowed running-time.`)
+        console.warn(`Task "${taskId}" exceeded the maximum allowed running-time. Execution duration: ${new Date().getTime() - this._lastStartTime.getTime()}ms`)
         BackgroundFetch.finish(taskId)
+        const index = this._taskIds.findIndex((tId) => tId === taskId)
+        if (index >= 0) {
+          this._taskIds.splice(index, 1)
+        }
       }
     )
   },
 
-  finish: function(taskId) {
-    BackgroundFetch.finish(taskId)
+  finish: function() {
+    for (let taskId of this._taskIds) {
+      BackgroundFetch.finish(taskId)
+    }
+    this._taskIds = []
   },
 
   statusAsync: function() {
