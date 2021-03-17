@@ -28,7 +28,10 @@ const BackgroundTask: BackgroundTaskInterface = {
 
   schedule: function() {
     // Cancel existing tasks
-    BackgroundFetch.stop()
+    for (let taskId of this._taskIds) {
+      BackgroundFetch.finish(taskId)
+    }
+    this._taskIds = []
 
     this._lastStartTime = new Date()
 

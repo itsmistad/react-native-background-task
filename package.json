@@ -1,7 +1,7 @@
 {
-  "name": "react-native-background-task",
-  "version": "0.2.1",
-  "author": "James Isaac & DJ Williamson",
+  "name": "@itsmistad/react-native-background-task",
+  "version": "0.2.3",
+  "author": "Derek Williamson",
   "description": "Periodic background tasks for React Native apps, cross-platform (iOS and Android), which run even when the app is closed.",
   "keywords": [
     "react-native",
