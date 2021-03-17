@@ -13,27 +13,24 @@ const BackgroundTask: BackgroundTaskInterface = {
     this._definition = task
   },
 
-  schedule: function(options = {}) {
+  schedule: function() {
     // Cancel existing tasks
     BackgroundFetch.stop()
 
     // Configure the native module
     // Automatically calls RNBackgroundFetch#start
     BackgroundFetch.configure(
-      { stopOnTerminate: false },
+      {},
       this._definition,
-      () => {
-        console.warn(`Background Fetch failed to start`)
+      (taskId) => {
+        console.warn(`Task ${taskId} exceeded the maximum allowed running-time.`)
+        BackgroundFetch.finish(taskId)
       }
     )
   },
 
-  finish: function() {
-    BackgroundFetch.finish()
-  },
-
-  cancel: function() {
-    BackgroundFetch.stop()
+  finish: function(taskId) {
+    BackgroundFetch.finish(taskId)
   },
 
   statusAsync: function() {

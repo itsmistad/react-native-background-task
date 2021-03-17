@@ -37,10 +37,6 @@ const BackgroundTask: BackgroundTaskInterface = {
   },
 
   finish: function() {
-    // Needed for iOS, no-op on Android
-  },
-
-  cancel: function() {
     RNBackgroundTask.cancel()
   },
 
